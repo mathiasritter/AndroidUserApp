@@ -23,12 +23,11 @@ public class UserTask extends AsyncTask<Void, Void, Boolean> {
     @Override
     protected Boolean doInBackground(Void... params) {
         response = userActivity.callRestAPI(user);
-        return response.getStatus() == 200;
+        return response.getStatus() == 200 || response.getStatus() == 201;
     }
 
     @Override
     protected void onPostExecute(final Boolean success) {
-
 
         if (success) {
             userActivity.success();
@@ -36,8 +35,6 @@ public class UserTask extends AsyncTask<Void, Void, Boolean> {
             userActivity.showProgress(false);
             Toast.makeText(userActivity.getApplicationContext(), response.getMessage(), Toast.LENGTH_LONG).show();
         }
-
-
 
     }
 

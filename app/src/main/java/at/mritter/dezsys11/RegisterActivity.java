@@ -62,8 +62,8 @@ public class RegisterActivity extends UserActivity {
     @Override
     public void success() {
         showProgress(false);
-        finish();
         Toast.makeText(getApplicationContext(), "Successfully registered", Toast.LENGTH_LONG).show();
+        finish();
     }
 }
 
