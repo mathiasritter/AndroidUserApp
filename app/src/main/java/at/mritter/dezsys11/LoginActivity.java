@@ -3,7 +3,6 @@ package at.mritter.dezsys11;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -31,17 +30,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import cz.msebera.android.httpclient.Header;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -73,15 +63,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View mProgressView;
     private View mLoginFormView;
 
-    // Progress Dialog Object
-    private ProgressDialog prgDialog;
-
-    // Error Msg TextView Object
-    private TextView errorMsg;
-
-    private String responseMessage;
-    private int responseStatus;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,13 +93,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
-
-        // Instantiate Progress Dialog object
-        prgDialog = new ProgressDialog(this);
-        // Set Progress Dialog Text
-        prgDialog.setMessage("Please wait...");
-        // Set Cancelable as False
-        prgDialog.setCancelable(false);
     }
 
     private void populateAutoComplete() {
@@ -211,7 +185,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            // showProgress(true);
+            showProgress(true);
             mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute((Void) null);
         }
@@ -225,78 +199,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         //TODO: Replace this with your own logic
         return password.length() > 4;
     }
-
-    /**
-     * Method that performs RESTful webservice invocations
-     *
-     * @param user
-     */
-    public void invokeWS(User user){
-
-        Response response = new Response();
-        RestAPICaller caller = new RestAPICaller("https://dezsys11.herokuapp.com");
-
-        caller.post(getApplicationContext(), user, "/register", new ResponseHandler(response));
-
-        this.responseMessage = response.getMessage();
-        this.responseStatus = response.getStatus();
-
-        // Make RESTful webservice call using AsyncHttpClient object
-        //AsyncHttpClient client = new AsyncHttpClient();
-
-
-        /**
-        client.get("http://192.168.2.2:9999/useraccount/register/doregister",params ,new AsyncHttpResponseHandler() {
-
-            // When the response returned by REST has Http response code '200'
-            @Override
-            public void onSuccess(String response) {
-                // Hide Progress Dialog
-                prgDialog.hide();
-                try {
-                    // JSON Object
-                    JSONObject obj = new JSONObject(response);
-                    // When the JSON response has status boolean value assigned with true
-                    if(obj.getBoolean("status")){
-                        // Set Default Values for Edit View controls
-                        setDefaultValues();
-                        // Display successfully registered message using Toast
-                        Toast.makeText(getApplicationContext(), "You are successfully registered!", Toast.LENGTH_LONG).show();
-                    }
-                    // Else display error message
-                    else{
-                        errorMsg.setText(obj.getString("error_msg"));
-                        Toast.makeText(getApplicationContext(), obj.getString("error_msg"), Toast.LENGTH_LONG).show();
-                    }
-                } catch (JSONException e) {
-                    // TODO Auto-generated catch block
-                    Toast.makeText(getApplicationContext(), "Error Occured [Server's JSON response might be invalid]!", Toast.LENGTH_LONG).show();
-                    e.printStackTrace();
-
-                }
-            }
-            // When the response returned by REST has Http response code other than '200'
-            @Override
-            public void onFailure(int statusCode, Throwable error,
-                                  String content) {
-                // Hide Progress Dialog
-                prgDialog.hide();
-                // When Http response code is '404'
-                if(statusCode == 404){
-                    Toast.makeText(getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
-                }
-                // When Http response code is '500'
-                else if(statusCode == 500){
-                    Toast.makeText(getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
-                }
-                // When Http response code other than 404, 500
-                else{
-                    Toast.makeText(getApplicationContext(), "Unexpected Error occcured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]", Toast.LENGTH_LONG).show();
-                }
-            }
-        });**/
-    }
-
 
     /**
      * Shows the progress UI and hides the login form.
@@ -389,6 +291,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     /**
+     * Method that performs RESTful webservice invocations
+     *
+     * @param user
+     */
+    public Response invokeLogin(User user){
+
+        Response response = new Response();
+        UserEndpointCaller caller = new UserEndpointCaller(getApplicationContext(), new ResponseHandler(response));
+        caller.login(user);
+        return response;
+    }
+
+    /**
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
@@ -396,6 +311,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         private final String mEmail;
         private final String mPassword;
+        private Response response;
 
         UserLoginTask(String email, String password) {
             mEmail = email;
@@ -404,22 +320,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            // showProgress(true);
-            invokeWS(new User(mEmail, mPassword));
-            return true;
+            response = invokeLogin(new User(mEmail, mPassword));
+            return response.getStatus() == 200;
         }
 
         @Override
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
             showProgress(false);
-            Toast.makeText(getApplicationContext(), LoginActivity.this.responseStatus + ": " +LoginActivity.this.responseMessage, Toast.LENGTH_LONG).show();
 
             if (success) {
-                //finish();
+                // TODO get to success screen
             } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
+                Toast.makeText(getApplicationContext(), response.getMessage(), Toast.LENGTH_LONG).show();
             }
 
         }
@@ -427,7 +340,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         @Override
         protected void onCancelled() {
             mAuthTask = null;
-            prgDialog.hide();
+            showProgress(false);
         }
     }
 }
