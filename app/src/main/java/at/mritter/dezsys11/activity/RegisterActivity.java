@@ -3,6 +3,7 @@ package at.mritter.dezsys11.activity;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import at.mritter.dezsys11.layout.EditTextWithBackButton;
 import at.mritter.dezsys11.R;
 import at.mritter.dezsys11.model.Response;
 import at.mritter.dezsys11.rest.ResponseHandler;
@@ -19,6 +20,23 @@ public class RegisterActivity extends UserActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         super.setupForm();
+
+        ((EditTextWithBackButton) findViewById(R.id.email)).setOnBackButtonListener(new EditTextWithBackButton.IOnBackButtonListener() {
+            @Override
+            public boolean OnEditTextBackButton() {
+                finish();
+                return true;
+            }
+        });
+
+        ((EditTextWithBackButton) findViewById(R.id.password)).setOnBackButtonListener(new EditTextWithBackButton.IOnBackButtonListener() {
+            @Override
+            public boolean OnEditTextBackButton() {
+                finish();
+                return true;
+            }
+        });
+
     }
 
 
