@@ -1,4 +1,4 @@
-package at.mritter.dezsys11;
+package at.mritter.dezsys11.model;
 
 public class Response {
 

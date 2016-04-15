@@ -1,8 +1,10 @@
-package at.mritter.dezsys11;
+package at.mritter.dezsys11.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
+
+import at.mritter.dezsys11.R;
 
 public class SuccessActivity extends AppCompatActivity {
 

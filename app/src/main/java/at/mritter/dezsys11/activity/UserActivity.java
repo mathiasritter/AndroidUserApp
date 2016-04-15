@@ -1,15 +1,23 @@
-package at.mritter.dezsys11;
+package at.mritter.dezsys11.activity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.Intent;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
+
+import at.mritter.dezsys11.R;
+import at.mritter.dezsys11.model.Response;
+import at.mritter.dezsys11.model.User;
+import at.mritter.dezsys11.task.UserTask;
 
 /**
  * A login screen that offers login via email/password.
@@ -21,6 +29,33 @@ public abstract class UserActivity extends AppCompatActivity {
     private EditText mPasswordView;
     private View mProgressView;
     private View mFormView;
+
+    public void setupForm() {
+        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+
+        mPasswordView = (EditText) findViewById(R.id.password);
+        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
+                if (id == R.id.login || id == EditorInfo.IME_NULL) {
+                    submit();
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        Button mEmailSignInButton = (Button) findViewById(R.id.submit_button);
+        mEmailSignInButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                submit();
+            }
+        });
+
+        mFormView = findViewById(R.id.form);
+        mProgressView = findViewById(R.id.progress);
+    }
 
     /**
      * Attempts to sign in or register the account specified by the login form.
@@ -40,14 +75,18 @@ public abstract class UserActivity extends AppCompatActivity {
         boolean cancel = false;
         View focusView = null;
 
-        // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+        // Check for a valid password
+        if (TextUtils.isEmpty(password)) {
+            mPasswordView.setError(getString(R.string.error_field_required));
+            focusView = mPasswordView;
+            cancel = true;
+        } else if (!isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
             cancel = true;
         }
 
-        // Check for a valid email address.
+        // Check for a valid email address
         if (TextUtils.isEmpty(email)) {
             mEmailView.setError(getString(R.string.error_field_required));
             focusView = mEmailView;
@@ -68,6 +107,11 @@ public abstract class UserActivity extends AppCompatActivity {
             showProgress(true);
             new UserTask(this).execute((Void) null);;
         }
+    }
+
+    public void clear() {
+        this.mEmailView.setText("");
+        this.mPasswordView.setText("");
     }
 
     private boolean isEmailValid(String email) {
@@ -119,7 +163,7 @@ public abstract class UserActivity extends AppCompatActivity {
     /**
      * Method that performs RESTful webservice invocations
      *
-     * @param user
+     * @param user the user
      */
     public abstract Response callRestAPI(User user);
 
@@ -131,22 +175,6 @@ public abstract class UserActivity extends AppCompatActivity {
 
     public String getPassword() {
         return mPasswordView.getText().toString();
-    }
-
-    public void setmEmailView(AutoCompleteTextView mEmailView) {
-        this.mEmailView = mEmailView;
-    }
-
-    public void setmPasswordView(EditText mPasswordView) {
-        this.mPasswordView = mPasswordView;
-    }
-
-    public void setmProgressView(View mProgressView) {
-        this.mProgressView = mProgressView;
-    }
-
-    public void setmFormView(View mFormView) {
-        this.mFormView = mFormView;
     }
 
 }

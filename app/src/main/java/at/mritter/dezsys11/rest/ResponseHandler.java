@@ -1,4 +1,4 @@
-package at.mritter.dezsys11;
+package at.mritter.dezsys11.rest;
 
 
 import com.loopj.android.http.TextHttpResponseHandler;
@@ -6,6 +6,7 @@ import com.loopj.android.http.TextHttpResponseHandler;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import at.mritter.dezsys11.model.Response;
 import cz.msebera.android.httpclient.Header;
 
 public class ResponseHandler extends TextHttpResponseHandler {

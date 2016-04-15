@@ -1,8 +1,11 @@
-package at.mritter.dezsys11;
+package at.mritter.dezsys11.task;
 
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.widget.Toast;
+
+import at.mritter.dezsys11.activity.UserActivity;
+import at.mritter.dezsys11.model.Response;
+import at.mritter.dezsys11.model.User;
 
 
 /**
@@ -15,7 +18,7 @@ public class UserTask extends AsyncTask<Void, Void, Boolean> {
     private User user;
     private Response response;
 
-    UserTask(UserActivity userActivity) {
+    public UserTask(UserActivity userActivity) {
         this.user = new User(userActivity.getEmail(), userActivity.getPassword());
         this.userActivity = userActivity;
     }
