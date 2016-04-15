@@ -4,20 +4,12 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
 
 /**
  * A login screen that offers login via email/password.
@@ -28,7 +20,7 @@ public abstract class UserActivity extends AppCompatActivity {
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
-    private View mLoginFormView;
+    private View mFormView;
 
     /**
      * Attempts to sign in or register the account specified by the login form.
@@ -99,12 +91,12 @@ public abstract class UserActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
+            mFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            mFormView.animate().setDuration(shortAnimTime).alpha(
                     show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+                    mFormView.setVisibility(show ? View.GONE : View.VISIBLE);
                 }
             });
 
@@ -120,7 +112,7 @@ public abstract class UserActivity extends AppCompatActivity {
             // The ViewPropertyAnimator APIs are not available, so simply show
             // and hide the relevant UI components.
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            mFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
 
@@ -131,10 +123,7 @@ public abstract class UserActivity extends AppCompatActivity {
      */
     public abstract Response callRestAPI(User user);
 
-    public void success() {
-        Intent intent = new Intent(this, SuccessActivity.class);
-        startActivity(intent);
-    }
+    public abstract void success();
 
     public String getEmail() {
         return mEmailView.getText().toString();
@@ -156,8 +145,8 @@ public abstract class UserActivity extends AppCompatActivity {
         this.mProgressView = mProgressView;
     }
 
-    public void setmLoginFormView(View mLoginFormView) {
-        this.mLoginFormView = mLoginFormView;
+    public void setmFormView(View mFormView) {
+        this.mFormView = mFormView;
     }
 
 }

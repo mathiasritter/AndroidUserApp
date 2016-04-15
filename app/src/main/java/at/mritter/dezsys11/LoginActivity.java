@@ -1,5 +1,6 @@
 package at.mritter.dezsys11;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -35,7 +36,7 @@ public class LoginActivity extends UserActivity {
 
         super.setmPasswordView(mPasswordView);
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+        Button mEmailSignInButton = (Button) findViewById(R.id.submit_button);
         mEmailSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -43,8 +44,17 @@ public class LoginActivity extends UserActivity {
             }
         });
 
-        super.setmLoginFormView(findViewById(R.id.login_form));
-        super.setmProgressView(findViewById(R.id.login_progress));
+        Button mRegisterButton = (Button) findViewById(R.id.register_button);
+        mRegisterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        super.setmFormView(findViewById(R.id.form));
+        super.setmProgressView(findViewById(R.id.progress));
     }
 
     /**
@@ -52,12 +62,22 @@ public class LoginActivity extends UserActivity {
      *
      * @param user
      */
+    @Override
     public Response callRestAPI(User user){
 
         Response response = new Response();
         UserEndpointCaller caller = new UserEndpointCaller(getApplicationContext(), new ResponseHandler(response));
         caller.login(user);
         return response;
+    }
+
+    @Override
+    public void success() {
+        Intent intent = new Intent(this, SuccessActivity.class);
+        intent.putExtra("email", super.getEmail());
+
+        showProgress(false);
+        startActivity(intent);
     }
 
 }

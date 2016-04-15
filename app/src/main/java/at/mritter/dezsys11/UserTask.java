@@ -28,13 +28,16 @@ public class UserTask extends AsyncTask<Void, Void, Boolean> {
 
     @Override
     protected void onPostExecute(final Boolean success) {
-        userActivity.showProgress(false);
+
 
         if (success) {
             userActivity.success();
         } else {
+            userActivity.showProgress(false);
             Toast.makeText(userActivity.getApplicationContext(), response.getMessage(), Toast.LENGTH_LONG).show();
         }
+
+
 
     }
 

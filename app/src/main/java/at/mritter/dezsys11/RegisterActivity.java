@@ -1,38 +1,15 @@
 package at.mritter.dezsys11;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
-
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
-
-import android.os.Build;
+import android.content.Intent;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static android.Manifest.permission.READ_CONTACTS;
+import android.widget.Toast;
 
 /**
  * A login screen that offers login via email/password.
@@ -60,7 +37,7 @@ public class RegisterActivity extends UserActivity {
 
         super.setmPasswordView(mPasswordView);
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+        Button mEmailSignInButton = (Button) findViewById(R.id.submit_button);
         mEmailSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -68,8 +45,8 @@ public class RegisterActivity extends UserActivity {
             }
         });
 
-        super.setmLoginFormView(findViewById(R.id.login_form));
-        super.setmProgressView(findViewById(R.id.login_progress));
+        super.setmFormView(findViewById(R.id.form));
+        super.setmProgressView(findViewById(R.id.progress));
     }
 
 
@@ -80,6 +57,13 @@ public class RegisterActivity extends UserActivity {
         UserEndpointCaller caller = new UserEndpointCaller(getApplicationContext(), new ResponseHandler(response));
         caller.register(user);
         return response;
+    }
+
+    @Override
+    public void success() {
+        showProgress(false);
+        finish();
+        Toast.makeText(getApplicationContext(), "Successfully registered", Toast.LENGTH_LONG).show();
     }
 }
 
