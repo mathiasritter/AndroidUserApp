@@ -1,5 +1,11 @@
 package at.mritter.dezsys11.model;
 
+/**
+ * Model class that represents a response from a rest api call.
+ *
+ * @author Mathias Ritter
+ * @version 1.0
+ */
 public class Response {
 
     private int status;

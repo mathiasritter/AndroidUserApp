@@ -1,5 +1,11 @@
 package at.mritter.dezsys11.model;
 
+/**
+ * Model class that represents a user for login/registration
+ *
+ * @author Mathias Ritter
+ * @version 1.0
+ */
 public class User {
 
     private String email, password;

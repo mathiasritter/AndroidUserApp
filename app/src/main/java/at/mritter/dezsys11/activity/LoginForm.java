@@ -4,19 +4,24 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 
 import at.mritter.dezsys11.R;
 import at.mritter.dezsys11.model.Response;
 import at.mritter.dezsys11.rest.ResponseHandler;
 import at.mritter.dezsys11.model.User;
-import at.mritter.dezsys11.rest.UserRequestor;
+import at.mritter.dezsys11.rest.UserRequester;
 
 /**
  * A login screen that offers login via email/password.
+ *
+ * @author Mathias Ritter
+ * @version 1.0
  */
-public class LoginActivity extends UserActivity {
+public class LoginForm extends UserForm {
 
+    /**
+     * @see android.support.v7.app.AppCompatActivity#onCreate(Bundle)
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,32 +33,33 @@ public class LoginActivity extends UserActivity {
         mRegisterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                Intent intent = new Intent(LoginForm.this, RegisterForm.class);
                 startActivity(intent);
             }
         });
     }
 
     /**
-     * Method that performs RESTful webservice invocations
-     *
-     * @param user
+     * @see UserForm#callRestAPI(User)
      */
     @Override
     public Response callRestAPI(User user){
 
         Response response = new Response();
-        UserRequestor caller = new UserRequestor(getApplicationContext(), new ResponseHandler(response));
+        UserRequester caller = new UserRequester(getApplicationContext(), new ResponseHandler(response));
         caller.login(user);
         return response;
     }
 
+    /**
+     * @see UserForm#success()
+     */
     @Override
     public void success() {
         Intent intent = new Intent(this, SuccessActivity.class);
         intent.putExtra("email", super.getEmail());
 
-        super.clear();
+        super.clearForm();
         showProgress(false);
         startActivity(intent);
     }

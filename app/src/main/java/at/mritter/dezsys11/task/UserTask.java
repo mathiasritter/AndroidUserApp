@@ -3,7 +3,7 @@ package at.mritter.dezsys11.task;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
-import at.mritter.dezsys11.activity.UserActivity;
+import at.mritter.dezsys11.activity.UserForm;
 import at.mritter.dezsys11.model.Response;
 import at.mritter.dezsys11.model.User;
 
@@ -11,39 +11,52 @@ import at.mritter.dezsys11.model.User;
 /**
  * Represents an asynchronous login/registration task used to authenticate
  * the user.
+ *
+ * @author Mathias Ritter
+ * @version 1.0
  */
 public class UserTask extends AsyncTask<Void, Void, Boolean> {
 
-    private UserActivity userActivity;
+    private UserForm userForm;
     private User user;
     private Response response;
 
-    public UserTask(UserActivity userActivity) {
-        this.user = new User(userActivity.getEmail(), userActivity.getPassword());
-        this.userActivity = userActivity;
+    public UserTask(UserForm userForm) {
+        this.user = new User(userForm.getEmail(), userForm.getPassword());
+        this.userForm = userForm;
     }
 
+    /**
+     * @see AsyncTask#doInBackground(Object[])
+     */
     @Override
     protected Boolean doInBackground(Void... params) {
-        response = userActivity.callRestAPI(user);
+        response = userForm.callRestAPI(user);
+        // rest api call was successful if status is 200 or 201
         return response.getStatus() == 200 || response.getStatus() == 201;
     }
 
+    /**
+     * @see AsyncTask#onPostExecute(Object)
+     */
     @Override
     protected void onPostExecute(final Boolean success) {
 
         if (success) {
-            userActivity.success();
+            userForm.success();
         } else {
-            userActivity.showProgress(false);
-            Toast.makeText(userActivity.getApplicationContext(), response.getMessage(), Toast.LENGTH_LONG).show();
+            userForm.showProgress(false);
+            Toast.makeText(userForm.getApplicationContext(), response.getMessage(), Toast.LENGTH_LONG).show();
         }
 
     }
 
+    /**
+     * @see AsyncTask#onCancelled()
+     */
     @Override
     protected void onCancelled() {
-        userActivity.showProgress(false);
+        userForm.showProgress(false);
     }
 }
 

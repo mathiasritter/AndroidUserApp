@@ -6,13 +6,23 @@ import android.widget.TextView;
 
 import at.mritter.dezsys11.R;
 
+/**
+ * A screen that is being showed after a successful login
+ *
+ * @author Mathias Ritter
+ * @version 1.0
+ */
 public class SuccessActivity extends AppCompatActivity {
 
+    /**
+     * @see android.support.v7.app.AppCompatActivity#onCreate(Bundle)
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_success);
 
+        // append email to success message
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             String email = extras.getString("email");

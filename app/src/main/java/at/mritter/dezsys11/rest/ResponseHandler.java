@@ -9,6 +9,12 @@ import org.json.JSONObject;
 import at.mritter.dezsys11.model.Response;
 import cz.msebera.android.httpclient.Header;
 
+/**
+ * Handles responses from rest api calls.
+ *
+ * @author Mathias Ritter
+ * @version 1.0
+ */
 public class ResponseHandler extends TextHttpResponseHandler {
 
     private Response response;
@@ -17,6 +23,9 @@ public class ResponseHandler extends TextHttpResponseHandler {
         this.response = response;
     }
 
+    /**
+     * @see TextHttpResponseHandler#onSuccess(int, Header[], String)
+     */
     @Override
     public void onSuccess(int statusCode, Header[] headers, String responseString) {
         try {
@@ -33,6 +42,9 @@ public class ResponseHandler extends TextHttpResponseHandler {
         }
     }
 
+    /**
+     * @see TextHttpResponseHandler#onFailure(int, Header[], String, Throwable)
+     */
     @Override
     public void onFailure(int statusCode, Header[] headers, String responseString, Throwable error) {
         try {

@@ -5,24 +5,26 @@ import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.widget.EditText;
 
+/**
+ * Edit text UI element that enables to close the activity when closing the keyboard
+ *
+ * @author Mathias Ritter
+ * @version 1.0
+ */
 public class EditTextWithBackButton extends EditText {
-    public interface IOnBackButtonListener
-    {
+    public interface IOnBackButtonListener {
         boolean OnEditTextBackButton();
     }
 
-    public EditTextWithBackButton(Context context)
-    {
+    public EditTextWithBackButton(Context context) {
         super(context);
     }
 
-    public EditTextWithBackButton(Context context, AttributeSet attrs)
-    {
+    public EditTextWithBackButton(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public void setOnBackButtonListener(IOnBackButtonListener l)
-    {
+    public void setOnBackButtonListener(IOnBackButtonListener l) {
         _listener = l;
     }
 

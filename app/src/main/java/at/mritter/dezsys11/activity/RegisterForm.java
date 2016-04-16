@@ -8,13 +8,19 @@ import at.mritter.dezsys11.R;
 import at.mritter.dezsys11.model.Response;
 import at.mritter.dezsys11.rest.ResponseHandler;
 import at.mritter.dezsys11.model.User;
-import at.mritter.dezsys11.rest.UserRequestor;
+import at.mritter.dezsys11.rest.UserRequester;
 
 /**
- * A login screen that offers login via email/password.
+ * A register screen that offers registration via email/password.
+ *
+ * @author Mathias Ritter
+ * @version 1.0
  */
-public class RegisterActivity extends UserActivity {
+public class RegisterForm extends UserForm {
 
+    /**
+     * @see android.support.v7.app.AppCompatActivity#onCreate(Bundle)
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,16 +45,21 @@ public class RegisterActivity extends UserActivity {
 
     }
 
-
+    /**
+     * @see UserForm#callRestAPI(User)
+     */
     @Override
     public Response callRestAPI(User user) {
 
         Response response = new Response();
-        UserRequestor caller = new UserRequestor(getApplicationContext(), new ResponseHandler(response));
+        UserRequester caller = new UserRequester(getApplicationContext(), new ResponseHandler(response));
         caller.register(user);
         return response;
     }
 
+    /**
+     * @see UserForm#success()
+     */
     @Override
     public void success() {
         showProgress(false);

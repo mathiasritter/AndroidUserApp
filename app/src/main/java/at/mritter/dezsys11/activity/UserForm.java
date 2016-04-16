@@ -6,10 +6,10 @@ import android.annotation.TargetApi;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Patterns;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -20,9 +20,12 @@ import at.mritter.dezsys11.model.User;
 import at.mritter.dezsys11.task.UserTask;
 
 /**
- * A login screen that offers login via email/password.
+ * A form that offers login or registration via email/password.
+ *
+ * @author Mathias Ritter
+ * @version 1.0
  */
-public abstract class UserActivity extends AppCompatActivity {
+public abstract class UserForm extends AppCompatActivity {
 
     // UI references.
     private EditText mEmailView;
@@ -30,26 +33,31 @@ public abstract class UserActivity extends AppCompatActivity {
     private View mProgressView;
     private View mFormView;
 
+    /**
+     * This method sets up the form ui elements
+     */
     public void setupForm() {
         mEmailView = (EditText) findViewById(R.id.email);
 
+        // Configure submit via password field
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    submit();
+                if (id == R.id.submit || id == EditorInfo.IME_NULL) {
+                    submitForm();
                     return true;
                 }
                 return false;
             }
         });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.submit_button);
-        mEmailSignInButton.setOnClickListener(new View.OnClickListener() {
+        // Configure submit button
+        Button mSubmitButton = (Button) findViewById(R.id.submit_button);
+        mSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                submit();
+                submitForm();
             }
         });
 
@@ -62,7 +70,7 @@ public abstract class UserActivity extends AppCompatActivity {
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
-    public void submit() {
+    public void submitForm() {
 
         // Reset errors.
         mEmailView.setError(null);
@@ -105,27 +113,43 @@ public abstract class UserActivity extends AppCompatActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            new UserTask(this).execute((Void) null);;
+            new UserTask(this).execute((Void) null);
         }
     }
 
-    public void clear() {
+    /**
+     * Clears the form (email and password)
+     */
+    public void clearForm() {
         this.mEmailView.setText("");
         this.mPasswordView.setText("");
     }
 
+    /**
+     * Validates the given email address
+     *
+     * @param email email to validate
+     * @return true if email is valid
+     */
     private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        return email.contains("@");
+        return Patterns.EMAIL_ADDRESS.matcher(email).matches();
+
     }
 
+    /**
+     * Validates the given password
+     *
+     * @param password password to validate
+     * @return true if password is valid
+     */
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
         return password.length() > 4;
     }
 
     /**
      * Shows the progress UI and hides the login form.
+     *
+     * @param show true if the progress ui should be shown
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     public void showProgress(final boolean show) {
@@ -163,10 +187,13 @@ public abstract class UserActivity extends AppCompatActivity {
     /**
      * Method that performs RESTful webservice invocations
      *
-     * @param user the user
+     * @param user the user data that is used
      */
     public abstract Response callRestAPI(User user);
 
+    /**
+     * Method that is called if the submit action was successful
+     */
     public abstract void success();
 
     public String getEmail() {
