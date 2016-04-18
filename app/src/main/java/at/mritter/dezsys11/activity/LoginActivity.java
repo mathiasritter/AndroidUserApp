@@ -17,7 +17,7 @@ import at.mritter.dezsys11.rest.UserRequester;
  * @author Mathias Ritter
  * @version 1.0
  */
-public class LoginForm extends UserForm {
+public class LoginActivity extends UserForm {
 
     /**
      * @see android.support.v7.app.AppCompatActivity#onCreate(Bundle)
@@ -33,7 +33,7 @@ public class LoginForm extends UserForm {
         mRegisterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(LoginForm.this, RegisterForm.class);
+                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
                 startActivity(intent);
             }
         });
@@ -44,7 +44,6 @@ public class LoginForm extends UserForm {
      */
     @Override
     public Response callRestAPI(User user){
-
         Response response = new Response();
         UserRequester caller = new UserRequester(getApplicationContext(), new ResponseHandler(response));
         caller.login(user);

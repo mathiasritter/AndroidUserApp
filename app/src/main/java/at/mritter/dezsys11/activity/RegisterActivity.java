@@ -16,7 +16,7 @@ import at.mritter.dezsys11.rest.UserRequester;
  * @author Mathias Ritter
  * @version 1.0
  */
-public class RegisterForm extends UserForm {
+public class RegisterActivity extends UserForm {
 
     /**
      * @see android.support.v7.app.AppCompatActivity#onCreate(Bundle)
